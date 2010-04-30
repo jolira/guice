@@ -11,5 +11,15 @@
   <name>Jolira Multipbindings</name>
   <description>Guice Multibindings &amp; Source Code from the Guice Trunk</description>
   <dependencies>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jolira</groupId>
+      <artifactId>guice</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
