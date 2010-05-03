@@ -11,10 +11,17 @@
 package com.google.code.joliratools.plugins;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
+import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * This class is the core of the plugin mechanism. It searches all available jar
@@ -26,12 +33,68 @@ import com.google.inject.Injector;
  * 
  */
 public class PluginManager {
+    private static void close(final InputStream is) {
+        try {
+            is.close();
+        } catch (final IOException e) {
+            throw new PluginException(e);
+        }
+    }
+
     private static Enumeration<URL> getManifestURLs() {
         final Thread tread = Thread.currentThread();
         final ClassLoader cl = tread.getContextClassLoader();
 
         try {
             return cl.getResources("/META-INF/MANIFEST.MF");
+        } catch (final IOException e) {
+            throw new PluginException(e);
+        }
+    }
+
+    private static Injector loadInjector() {
+        final Enumeration<URL> urls = getManifestURLs();
+        final Collection<Module> modules = new ArrayList<Module>();
+
+        while (urls.hasMoreElements()) {
+            final URL url = urls.nextElement();
+            final Module module = loadModule(url);
+
+            if (module != null) {
+                modules.add(module);
+            }
+        }
+
+        return Guice.createInjector(modules);
+    }
+
+    private static Manifest loadManifest(final URL url) {
+        final InputStream is = open(url);
+
+        try {
+            return new Manifest(is);
+        } catch (final IOException e) {
+            throw new PluginException(e);
+        } finally {
+            close(is);
+        }
+    }
+
+    private static Module loadModule(final URL url) {
+        final Manifest mf = loadManifest(url);
+        final Attributes props = mf.getMainAttributes();
+        final String className = props.getValue("Guice-Module");
+
+        if (className == null || className.isEmpty()) {
+            return null;
+        }
+
+        return null;
+    }
+
+    private static InputStream open(final URL url) {
+        try {
+            return url.openStream();
         } catch (final IOException e) {
             throw new PluginException(e);
         }
@@ -45,15 +108,5 @@ public class PluginManager {
         }
 
         return cachedInjector = loadInjector();
-    }
-
-    private Injector loadInjector() {
-        final Enumeration<URL> urls = getManifestURLs();
-
-        while (urls.hasMoreElements()) {
-
-        }
-
-        return null;
     }
 }

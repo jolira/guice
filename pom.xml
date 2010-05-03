@@ -23,6 +23,7 @@
   <modules>
       <module>base</module>
       <module>multibindings</module>
+      <module>plugins</module>
   </modules>
 
   <scm>

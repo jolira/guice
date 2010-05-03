@@ -7,7 +7,7 @@
   </parent>
   <artifactId>multibindings</artifactId>
   <packaging>jar</packaging>
-  <name>Jolira Multipbindings</name>
+  <name>Jolira Multibindings</name>
   <description>Guice Multibindings &amp; Source Code from the Guice Trunk</description>
   <dependencies>
     <dependency>
