@@ -89,7 +89,13 @@ public class PluginManager {
             return null;
         }
 
-        return null;
+        try {
+            final Class<?> cls = Class.forName(className);
+
+            return (Module) cls.newInstance();
+        } catch (final Exception e) {
+            throw new PluginException(e);
+        }
     }
 
     private static InputStream open(final URL url) {
