@@ -10,18 +10,19 @@
  */
 package com.google.code.joliratools.plugins;
 
+import static com.google.inject.Stage.DEVELOPMENT;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.InjectorBuilder;
 import com.google.inject.Module;
+import com.google.inject.Stage;
 
 /**
  * This class is the core of the plugin mechanism. It searches all available jar
@@ -50,22 +51,6 @@ public class PluginManager {
         } catch (final IOException e) {
             throw new PluginException(e);
         }
-    }
-
-    private static Injector loadInjector() {
-        final Enumeration<URL> urls = getManifestURLs();
-        final Collection<Module> modules = new ArrayList<Module>();
-
-        while (urls.hasMoreElements()) {
-            final URL url = urls.nextElement();
-            final Module module = loadModule(url);
-
-            if (module != null) {
-                modules.add(module);
-            }
-        }
-
-        return Guice.createInjector(modules);
     }
 
     private static Manifest loadManifest(final URL url) {
@@ -108,11 +93,50 @@ public class PluginManager {
 
     private Injector cachedInjector = null;
 
+    private final Stage stage;
+
+    /**
+     * Create an new plugin manager that creates {@link DEVLOPMENT} stage
+     * {@link Injector}s.
+     */
+    public PluginManager() {
+        this(DEVELOPMENT);
+    }
+
+    /**
+     * Create an new plugin manager that creates {@link Injector}s of a
+     * specified stage.
+     * 
+     * @param stage
+     *            the stage to create
+     */
+    public PluginManager(final Stage stage) {
+        this.stage = stage;
+    }
+
     public synchronized Injector getInjector() throws PluginException {
         if (cachedInjector != null) {
             return cachedInjector;
         }
 
         return cachedInjector = loadInjector();
+    }
+
+    private Injector loadInjector() {
+        final Enumeration<URL> urls = getManifestURLs();
+        final InjectorBuilder builder = new InjectorBuilder();
+
+        builder.stage(stage);
+
+        while (urls.hasMoreElements()) {
+            final URL url = urls.nextElement();
+            final Module module = loadModule(url);
+
+            if (module != null) {
+                builder.addModules(module);
+            }
+        }
+
+        return builder.build();
     }
 }
