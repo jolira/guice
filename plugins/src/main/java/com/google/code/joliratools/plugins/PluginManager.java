@@ -15,10 +15,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 
 import com.google.inject.Injector;
 import com.google.inject.InjectorBuilder;
@@ -33,7 +36,8 @@ import com.google.inject.Stage;
  * @author jfk
  */
 public class PluginManager {
-    private static final String SERVICE_ID = "META-INF/services/com.google.inject.Module";
+    private static final String NAME = "com.google.inject.Module";
+    private static final String SERVICE_ID = "META-INF/services/" + NAME;
 
     private static void close(final Reader reader) {
         try {
@@ -57,13 +61,56 @@ public class PluginManager {
         });
     }
 
-    private static Enumeration<URL> getServiceURLs() {
+    private static URL[] getServiceURLs() {
+        final Enumeration<URL> clUrls = loadFromClasLoader();
+        final Collection<URL> result = new HashSet<URL>();
+
+        while (clUrls.hasMoreElements()) {
+            final URL url = clUrls.nextElement();
+
+            result.add(url);
+        }
+
+        loadFromProperties(result);
+
+        final int size = result.size();
+
+        return result.toArray(new URL[size]);
+    }
+
+    private static URL getURL(final String url) {
+        final String normalized = normalize(url);
+
+        try {
+            return new URL(normalized);
+        } catch (final MalformedURLException e) {
+            throw new PluginException(e);
+        }
+    }
+
+    private static Enumeration<URL> loadFromClasLoader() {
         final ClassLoader cl = getContextClassLoader();
 
         try {
             return cl.getResources(SERVICE_ID);
         } catch (final IOException e) {
             throw new PluginException(e);
+        }
+    }
+
+    private static void loadFromProperties(final Collection<URL> result) {
+        final String vals = System.getProperty(NAME);
+
+        if (vals == null) {
+            return;
+        }
+
+        final String[] split = vals.split(";");
+
+        for (final String _url : split) {
+            final URL url = getURL(_url);
+
+            result.add(url);
         }
     }
 
@@ -102,6 +149,18 @@ public class PluginManager {
         } finally {
             close(reader);
         }
+    }
+
+    private static String normalize(final String url) {
+        if (url.endsWith(NAME)) {
+            return url;
+        }
+
+        if (url.endsWith("/")) {
+            return url + SERVICE_ID;
+        }
+
+        return url + '/' + SERVICE_ID;
     }
 
     private static InputStream open(final URL url) {
@@ -154,15 +213,13 @@ public class PluginManager {
     }
 
     private Injector loadInjector() {
-        final Enumeration<URL> urls = getServiceURLs();
+        final URL[] urls = getServiceURLs();
         final InjectorBuilder builder = new InjectorBuilder();
 
         builder.stage(stage);
         builder.addModules(modules);
 
-        while (urls.hasMoreElements()) {
-            final URL url = urls.nextElement();
-
+        for (final URL url : urls) {
             loadModule(url, builder);
         }
 
