@@ -177,7 +177,7 @@ public class PluginManager {
     private final Module[] modules;
 
     /**
-     * Create an new plugin manager that creates {@link DEVLOPMENT} stage {@link Injector}s.
+     * Create an new plugin manager that creates {@literal DEVLOPMENT} stage {@link Injector}s.
      * 
      * @param modules
      *            optional modules that should be made available to the injector
@@ -191,6 +191,8 @@ public class PluginManager {
      * 
      * @param stage
      *            the stage to create
+     * @param modules
+     *            additional modules
      */
     public PluginManager(final Stage stage, final Module... modules) {
         this.stage = stage;
@@ -198,10 +200,9 @@ public class PluginManager {
     }
 
     /**
-     * Return the
+     * Return a cached injector or create a new one.
      * 
-     * @param modules
-     * @return
+     * @return the injector
      * @throws PluginException
      */
     public synchronized Injector getInjector() throws PluginException {
