@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.google.code.joliratools.plugins;
 
@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
@@ -17,7 +18,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.google.inject.internal.Sets;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
@@ -26,22 +26,31 @@ import com.google.inject.name.Names;
  * @author jfk
  */
 public class PluginManagerTest {
+    /**
+     */
     public static class MyTest {
+        /**
+         * @param abcde
+         */
         @Inject
         public MyTest(@Named("abc") final Set<String> abcde) {
             assertEquals(setOf("A", "B", "C"), abcde);
         }
     }
 
-    private static <T> Set<T> setOf(final T... elements) {
-        final Set<T> result = Sets.newHashSet();
+    static <T> Set<T> setOf(final T... elements) {
+        final Set<T> result = new HashSet<T>();
         result.addAll(Arrays.asList(elements));
         return result;
     }
 
     final TypeLiteral<Set<String>> setOfString = new TypeLiteral<Set<String>>() {
+        // nothing
     };
 
+    /**
+     *
+     */
     @Test
     public void testMain() {
         final PluginManager mgr = new PluginManager();
@@ -50,6 +59,9 @@ public class PluginManagerTest {
         assertNotNull(injector);
     }
 
+    /**
+     *
+     */
     @Test
     public void testMultibinderAggregationForAnnotationInstance() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
@@ -68,6 +80,9 @@ public class PluginManagerTest {
         assertEquals(setOf("A", "B", "C"), abcde);
     }
 
+    /**
+     *
+     */
     @Test
     public void testMultibinderInjectSet() {
         final Injector injector = Guice.createInjector(new AbstractModule() {
