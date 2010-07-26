@@ -23,9 +23,11 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 
+import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.InjectorBuilder;
 import com.google.inject.Module;
+import com.google.inject.Scope;
 import com.google.inject.Stage;
 
 /**
@@ -172,8 +174,8 @@ public class PluginManager {
     }
 
     private Injector cachedInjector = null;
-
     private final Stage stage;
+
     private final Module[] modules;
 
     /**
@@ -216,8 +218,15 @@ public class PluginManager {
     private Injector loadInjector() {
         final URL[] urls = getServiceURLs();
         final InjectorBuilder builder = new InjectorBuilder();
+        final Scope scope = new PluginManagerScope();
 
         builder.stage(stage);
+        builder.addModules(new Module() {
+            @Override
+            public void configure(final Binder binder) {
+                binder.bindScope(ManagedSingleton.class, scope);
+            }
+        });
         builder.addModules(modules);
 
         for (final URL url : urls) {
