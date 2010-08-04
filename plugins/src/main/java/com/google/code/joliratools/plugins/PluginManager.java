@@ -116,7 +116,8 @@ public class PluginManager {
         }
     }
 
-    private static void loadModule(final URL url, final InjectorBuilder builder, final Collection<Module> loaded) {
+    private static void loadModule(final URL url, final InjectorBuilder builder,
+            final Collection<Class<? extends Module>> loaded) {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(open(url)));
 
         try {
@@ -136,8 +137,12 @@ public class PluginManager {
                 final Class<?> cls = Class.forName(className);
                 final Module module = (Module) cls.newInstance();
 
-                if (module != null && loaded.add(module)) {
-                    builder.addModules(module);
+                if (module != null) {
+                    final Class<? extends Module> clazz = module.getClass();
+
+                    if (loaded.add(clazz)) {
+                        builder.addModules(module);
+                    }
                 }
             }
         } catch (final IOException e) {
@@ -219,7 +224,7 @@ public class PluginManager {
         final URL[] urls = getServiceURLs();
         final InjectorBuilder builder = new InjectorBuilder();
         final Scope scope = new PluginManagerScope();
-        final Collection<Module> loaded = new HashSet<Module>();
+        final Collection<Class<? extends Module>> loaded = new HashSet<Class<? extends Module>>();
 
         builder.stage(stage);
         builder.addModules(new Module() {
@@ -230,7 +235,9 @@ public class PluginManager {
         });
 
         for (final Module module : modules) {
-            if (loaded.add(module)) {
+            final Class<? extends Module> cls = module.getClass();
+
+            if (loaded.add(cls)) {
                 builder.addModules(module);
             }
         }
