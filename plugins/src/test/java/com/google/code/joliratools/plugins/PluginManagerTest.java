@@ -126,7 +126,7 @@ public class PluginManagerTest {
                 binder.bind(MySingletonInterface.class).to(MySingleton.class);
             }
         };
-        final PluginManager mgr1 = new PluginManager(module);
+        final PluginManager mgr1 = new PluginManager(module, module);
         final Injector injector1 = mgr1.getInjector();
         final MySingletonInterface i1 = injector1.getInstance(MySingletonInterface.class);
         final MySingletonInterface i2 = injector1.getInstance(MySingletonInterface.class);

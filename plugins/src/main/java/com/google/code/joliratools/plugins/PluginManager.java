@@ -116,7 +116,7 @@ public class PluginManager {
         }
     }
 
-    private static void loadModule(final URL url, final InjectorBuilder builder) {
+    private static void loadModule(final URL url, final InjectorBuilder builder, final Collection<Module> loaded) {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(open(url)));
 
         try {
@@ -136,7 +136,7 @@ public class PluginManager {
                 final Class<?> cls = Class.forName(className);
                 final Module module = (Module) cls.newInstance();
 
-                if (module != null) {
+                if (module != null && loaded.add(module)) {
                     builder.addModules(module);
                 }
             }
@@ -219,6 +219,7 @@ public class PluginManager {
         final URL[] urls = getServiceURLs();
         final InjectorBuilder builder = new InjectorBuilder();
         final Scope scope = new PluginManagerScope();
+        final Collection<Module> loaded = new HashSet<Module>();
 
         builder.stage(stage);
         builder.addModules(new Module() {
@@ -227,10 +228,15 @@ public class PluginManager {
                 binder.bindScope(ManagedSingleton.class, scope);
             }
         });
-        builder.addModules(modules);
+
+        for (final Module module : modules) {
+            if (loaded.add(module)) {
+                builder.addModules(module);
+            }
+        }
 
         for (final URL url : urls) {
-            loadModule(url, builder);
+            loadModule(url, builder, loaded);
         }
 
         return builder.build();
