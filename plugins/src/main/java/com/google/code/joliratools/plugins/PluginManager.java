@@ -51,6 +51,7 @@ public class PluginManager {
 
     private static ClassLoader getContextClassLoader() {
         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+            @Override
             public ClassLoader run() {
                 final Thread thread = Thread.currentThread();
 
