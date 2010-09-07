@@ -5,10 +5,10 @@
 
 package com.google.code.joliratools.plugins;
 
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -24,7 +24,7 @@ import com.google.inject.Singleton;
  * @since 2.0.4
  * @see Singleton
  */
-@Target( { ElementType.TYPE, ElementType.METHOD })
+@Target({ TYPE })
 @Retention(RUNTIME)
 @ScopeAnnotation
 @Documented
