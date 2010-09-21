@@ -10,13 +10,11 @@
   <artifactId>gae-plugin</artifactId>
   <packaging>jar</packaging>
   <name>Google App Engine Plugin</name>
-  <description>Injects Google App Engine dependencies.</description>
+  <description>Google uses factories to provde access to interfaces such
+  as the UserService. This package provdes a Guice Module to enable code-injection of
+  these dependencies instead. There is also a set of mock objects in the test
+  jar provided with this package that simplifes testing App-Engine services.</description>
   <dependencies>
-    <dependency>
-      <groupId>com.jolira</groupId>
-      <artifactId>multibindings</artifactId>
-      <version>${project.version}</version>
-    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -28,6 +26,11 @@
       <artifactId>gae-runtime</artifactId>
       <version>1.3.7.1</version>
       <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>com.jolira</groupId>
+      <artifactId>guice</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>
