@@ -5,15 +5,23 @@
 
 package com.google.code.joliratools.plugins.gae;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.Test;
 
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.capabilities.CapabilitiesService;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.users.UserService;
 import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.MembersInjector;
 import com.google.inject.Module;
@@ -25,6 +33,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.binder.AnnotatedBindingBuilder;
 import com.google.inject.binder.AnnotatedConstantBindingBuilder;
 import com.google.inject.binder.LinkedBindingBuilder;
+import com.google.inject.binder.ScopedBindingBuilder;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.spi.Message;
 import com.google.inject.spi.TypeConverter;
@@ -61,8 +70,100 @@ public class GoogleAppEngineModuleTest {
 
             @Override
             public <T> AnnotatedBindingBuilder<T> bind(final Class<T> type) {
-                fail();
-                return null;
+                return new AnnotatedBindingBuilder<T>() {
+                    @Override
+                    public LinkedBindingBuilder<T> annotatedWith(final Annotation annotation) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public LinkedBindingBuilder<T> annotatedWith(final Class<? extends Annotation> annotationType) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public void asEagerSingleton() {
+                        fail();
+
+                    }
+
+                    @Override
+                    public void in(final Class<? extends Annotation> scopeAnnotation) {
+                        fail();
+
+                    }
+
+                    @Override
+                    public void in(final Scope scope) {
+                        fail();
+
+                    }
+
+                    @Override
+                    public ScopedBindingBuilder to(final Class<? extends T> implementation) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public ScopedBindingBuilder to(final Key<? extends T> targetKey) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public ScopedBindingBuilder to(final TypeLiteral<? extends T> implementation) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public <S extends T> ScopedBindingBuilder toConstructor(final Constructor<S> constructor) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public <S extends T> ScopedBindingBuilder toConstructor(final Constructor<S> constructor,
+                            final TypeLiteral<? extends S> _type) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public void toInstance(final T instance) {
+                        fail();
+
+                    }
+
+                    @Override
+                    public ScopedBindingBuilder toProvider(
+                            final Class<? extends javax.inject.Provider<? extends T>> providerType) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public ScopedBindingBuilder toProvider(
+                            final Key<? extends javax.inject.Provider<? extends T>> providerKey) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public ScopedBindingBuilder toProvider(final Provider<? extends T> provider) {
+                        return null;
+                    }
+
+                    @Override
+                    public ScopedBindingBuilder toProvider(
+                            final TypeLiteral<? extends javax.inject.Provider<? extends T>> providerType) {
+                        fail();
+                        return null;
+                    }
+                };
             }
 
             @Override
@@ -172,7 +273,12 @@ public class GoogleAppEngineModuleTest {
                 return null;
             }
         });
-        fail("Not yet implemented"); // TODO
-    }
 
+        final Injector i = Guice.createInjector(module);
+
+        assertNotNull(i.getInstance(UserService.class));
+        assertNotNull(i.getInstance(BlobstoreService.class));
+        assertNotNull(i.getInstance(CapabilitiesService.class));
+        assertNotNull(i.getInstance(DatastoreService.class));
+    }
 }
