@@ -23,6 +23,9 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.InjectorBuilder;
@@ -38,6 +41,7 @@ import com.google.inject.Stage;
  * @author jfk
  */
 public class PluginManager {
+    private static final Logger LOG = LoggerFactory.getLogger(PluginManager.class);
     private static final String NAME = "com.google.inject.Module";
     private static final String SERVICE_ID = "META-INF/services/" + NAME;
 
@@ -137,13 +141,13 @@ public class PluginManager {
 
                 final Class<?> cls = Class.forName(className);
                 final Module module = (Module) cls.newInstance();
+                final Class<? extends Module> clazz = module.getClass();
 
-                if (module != null) {
-                    final Class<? extends Module> clazz = module.getClass();
-
-                    if (loaded.add(clazz)) {
-                        builder.addModules(module);
-                    }
+                if (loaded.add(clazz)) {
+                    builder.addModules(module);
+                    LOG.info("added module " + clazz + " from " + url);
+                } else {
+                    LOG.warn("module " + clazz + " from " + url + " has already been added");
                 }
             }
         } catch (final IOException e) {
