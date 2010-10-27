@@ -21,7 +21,7 @@
   </licenses>
 
   <modules>
-      <module>base</module>
+      <module>guice</module>
       <module>multibindings</module>
       <module>plugins</module>
       <module>gae-plugin</module>
