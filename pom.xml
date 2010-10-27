@@ -28,9 +28,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/guice/tags/guice-parent-2.0.1</connection>
-    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/guice/tags/guice-parent-2.0.1</developerConnection>
-    <url>http://jolira-tools.googlecode.com/svn/guice/tags/guice-parent-2.0.1</url>
+    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/guice/trunk</connection>
+    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/guice/trunk</developerConnection>
+    <url>http://jolira-tools.googlecode.com/svn/guice/trunk</url>
   </scm>
   
   <url>http://code.google.com/p/jolira-tools/wiki/guice</url>
