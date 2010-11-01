@@ -43,6 +43,8 @@ import com.google.inject.Stage;
 public class PluginManager {
     private static final Logger LOG = LoggerFactory.getLogger(PluginManager.class);
     private static final String NAME = "com.google.inject.Module";
+    private static final String MOCK_NAME = "com.google.inject.MockModule";
+    private static final String MOCK_SERVICE_ID = "META-INF/services/" + MOCK_NAME;
     private static final String SERVICE_ID = "META-INF/services/" + NAME;
 
     private static void close(final Reader reader) {
@@ -68,8 +70,8 @@ public class PluginManager {
         });
     }
 
-    private static URL[] getServiceURLs() {
-        final Enumeration<URL> clUrls = loadFromClasLoader();
+    private static URL[] getServiceURLs(final boolean loadMocks) {
+        final Enumeration<URL> clUrls = loadFromClasLoader(loadMocks);
         final Collection<URL> result = new HashSet<URL>();
 
         while (clUrls.hasMoreElements()) {
@@ -95,11 +97,11 @@ public class PluginManager {
         }
     }
 
-    private static Enumeration<URL> loadFromClasLoader() {
+    private static Enumeration<URL> loadFromClasLoader(final boolean loadMocks) {
         final ClassLoader cl = getContextClassLoader();
 
         try {
-            return cl.getResources(SERVICE_ID);
+            return cl.getResources(loadMocks ? MOCK_SERVICE_ID : SERVICE_ID);
         } catch (final IOException e) {
             throw new PluginException(e);
         }
@@ -187,6 +189,21 @@ public class PluginManager {
     private final Stage stage;
 
     private final Module[] modules;
+    private final boolean loadMocks;
+
+    /**
+     * Create an new plugin manager that creates {@literal DEVLOPMENT} stage {@link Injector}s.
+     * 
+     * @param loadMocks
+     *            if set to {@literal true} modules are searched in
+     *            {@literal "META-INF/services/com.google.inject.MockModule"}; if set to {@literal false}
+     *            {@literal "META-INF/services/com.google.inject.Module"} is searched.
+     * @param modules
+     *            optional modules that should be made available to the injector
+     */
+    public PluginManager(final boolean loadMocks, final Module... modules) {
+        this(DEVELOPMENT, loadMocks, modules);
+    }
 
     /**
      * Create an new plugin manager that creates {@literal DEVLOPMENT} stage {@link Injector}s.
@@ -201,14 +218,31 @@ public class PluginManager {
     /**
      * Create an new plugin manager that creates {@link Injector}s of a specified stage.
      * 
+     * @param loadMocks
+     *            if set to {@literal true} modules are searched in
+     *            {@literal "META-INF/services/com.google.inject.MockModule"}; if set to {@literal false}
+     *            {@literal "META-INF/services/com.google.inject.Module"} is searched.
+     * @param stage
+     *            the stage to create
+     * @param modules
+     *            additional modules
+     */
+    public PluginManager(final Stage stage, final boolean loadMocks, final Module... modules) {
+        this.stage = stage;
+        this.loadMocks = loadMocks;
+        this.modules = modules;
+    }
+
+    /**
+     * Create an new plugin manager that creates {@link Injector}s of a specified stage.
+     * 
      * @param stage
      *            the stage to create
      * @param modules
      *            additional modules
      */
     public PluginManager(final Stage stage, final Module... modules) {
-        this.stage = stage;
-        this.modules = modules;
+        this(stage, false, modules);
     }
 
     /**
@@ -226,7 +260,7 @@ public class PluginManager {
     }
 
     private Injector loadInjector() {
-        final URL[] urls = getServiceURLs();
+        final URL[] urls = getServiceURLs(loadMocks);
         final InjectorBuilder builder = new InjectorBuilder();
         final Scope scope = new PluginManagerScope();
         final Collection<Class<? extends Module>> loaded = new HashSet<Class<? extends Module>>();
