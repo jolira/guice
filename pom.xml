@@ -6,7 +6,7 @@
     <version>1.0.9</version>
   </parent>
   <artifactId>guice-parent</artifactId>
-  <version>2.1.7</version>
+  <version>2.1.8-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Jolira Guice Parent</name>
@@ -28,9 +28,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/guice/tags/guice-parent-2.1.7</connection>
-    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/guice/tags/guice-parent-2.1.7</developerConnection>
-    <url>http://jolira-tools.googlecode.com/svn/guice/tags/guice-parent-2.1.7</url>
+    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/guice/trunk</connection>
+    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/guice/trunk</developerConnection>
+    <url>http://jolira-tools.googlecode.com/svn/guice/trunk</url>
   </scm>
   
   <url>http://code.google.com/p/jolira-tools/wiki/guice</url>
