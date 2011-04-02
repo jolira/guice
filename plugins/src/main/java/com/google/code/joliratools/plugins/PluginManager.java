@@ -1,10 +1,12 @@
 /**
- * (C) 2010 jolira (http://www.jolira.com). Licensed under the GNU General Public License, Version 3.0 (the "License");
- * you may not use this file except in compliance with the License. You may obtain a copy of the License at
- * http://www.gnu.org/licenses/gpl-3.0-standalone.html Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language governing permissions and limitations
- * under the License.
+ * (C) 2010 jolira (http://www.jolira.com). Licensed under the GNU General
+ * Public License, Version 3.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ * http://www.gnu.org/licenses/gpl-3.0-standalone.html Unless required by
+ * applicable law or agreed to in writing, software distributed under the
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+ * OF ANY KIND, either express or implied. See the License for the specific
+ * language governing permissions and limitations under the License.
  */
 package com.google.code.joliratools.plugins;
 
@@ -19,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -27,15 +30,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Binder;
+import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.InjectorBuilder;
 import com.google.inject.Module;
 import com.google.inject.Scope;
 import com.google.inject.Stage;
 
 /**
- * This class is the core of the plugin mechanism. It searches all available jar files for manifest files with a
- * {@literal Guice-Module} directive, instantiates the module identified by this directive, and constructs an
+ * This class is the core of the plugin mechanism. It searches all available jar
+ * files for manifest files with a {@literal Guice-Module} directive,
+ * instantiates the module identified by this directive, and constructs an
  * {@link Injector} based on these modules.
  * 
  * @author jfk
@@ -123,7 +127,7 @@ public class PluginManager {
         }
     }
 
-    private static void loadModule(final URL url, final InjectorBuilder builder,
+    private static void loadModules(final URL url, final Collection<Module> modules,
             final Collection<Class<? extends Module>> loaded) {
         final BufferedReader reader = new BufferedReader(new InputStreamReader(open(url)));
 
@@ -146,7 +150,7 @@ public class PluginManager {
                 final Class<? extends Module> clazz = module.getClass();
 
                 if (loaded.add(clazz)) {
-                    builder.addModules(module);
+                    modules.add(module);
                     LOG.info("added module " + clazz + " from " + url);
                 } else {
                     LOG.warn("module " + clazz + " from " + url + " has already been added");
@@ -188,16 +192,19 @@ public class PluginManager {
     private Injector cachedInjector = null;
     private final Stage stage;
 
-    private final Module[] modules;
     private final boolean loadMocks;
+    private final Module[] modules;
 
     /**
-     * Create an new plugin manager that creates {@literal DEVLOPMENT} stage {@link Injector}s.
+     * Create an new plugin manager that creates {@literal DEVLOPMENT} stage
+     * {@link Injector}s.
      * 
      * @param loadMocks
      *            if set to {@literal true} modules are searched in
-     *            {@literal "META-INF/services/com.google.inject.MockModule"}; if set to {@literal false}
-     *            {@literal "META-INF/services/com.google.inject.Module"} is searched.
+     *            {@literal "META-INF/services/com.google.inject.MockModule"};
+     *            if set to {@literal false}
+     *            {@literal "META-INF/services/com.google.inject.Module"} is
+     *            searched.
      * @param modules
      *            optional modules that should be made available to the injector
      */
@@ -206,7 +213,8 @@ public class PluginManager {
     }
 
     /**
-     * Create an new plugin manager that creates {@literal DEVLOPMENT} stage {@link Injector}s.
+     * Create an new plugin manager that creates {@literal DEVLOPMENT} stage
+     * {@link Injector}s.
      * 
      * @param modules
      *            optional modules that should be made available to the injector
@@ -216,12 +224,15 @@ public class PluginManager {
     }
 
     /**
-     * Create an new plugin manager that creates {@link Injector}s of a specified stage.
+     * Create an new plugin manager that creates {@link Injector}s of a
+     * specified stage.
      * 
      * @param loadMocks
      *            if set to {@literal true} modules are searched in
-     *            {@literal "META-INF/services/com.google.inject.MockModule"}; if set to {@literal false}
-     *            {@literal "META-INF/services/com.google.inject.Module"} is searched.
+     *            {@literal "META-INF/services/com.google.inject.MockModule"};
+     *            if set to {@literal false}
+     *            {@literal "META-INF/services/com.google.inject.Module"} is
+     *            searched.
      * @param stage
      *            the stage to create
      * @param modules
@@ -234,7 +245,8 @@ public class PluginManager {
     }
 
     /**
-     * Create an new plugin manager that creates {@link Injector}s of a specified stage.
+     * Create an new plugin manager that creates {@link Injector}s of a
+     * specified stage.
      * 
      * @param stage
      *            the stage to create
@@ -261,12 +273,11 @@ public class PluginManager {
 
     private Injector loadInjector() {
         final URL[] urls = getServiceURLs(loadMocks);
-        final InjectorBuilder builder = new InjectorBuilder();
+        final Collection<Module> _modules = new ArrayList<Module>();
         final Scope scope = new PluginManagerScope();
         final Collection<Class<? extends Module>> loaded = new HashSet<Class<? extends Module>>();
 
-        builder.stage(stage);
-        builder.addModules(new Module() {
+        _modules.add(new Module() {
             @Override
             public void configure(final Binder binder) {
                 binder.bindScope(ManagedSingleton.class, scope);
@@ -277,14 +288,14 @@ public class PluginManager {
             final Class<? extends Module> cls = module.getClass();
 
             if (loaded.add(cls)) {
-                builder.addModules(module);
+                _modules.add(module);
             }
         }
 
         for (final URL url : urls) {
-            loadModule(url, builder, loaded);
+            loadModules(url, _modules, loaded);
         }
 
-        return builder.build();
+        return Guice.createInjector(stage, _modules);
     }
 }
