@@ -3,14 +3,14 @@
   <parent>
     <groupId>com.jolira</groupId>
     <artifactId>superpom</artifactId>
-    <version>1.0.12</version>
+    <version>1.1.4</version>
   </parent>
   <artifactId>guice-parent</artifactId>
-  <version>3.0.1-SNAPSHOT</version>
+  <version>3.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Jolira Guice Parent</name>
-  <description>Guice, Extensions &amp; Source Code from the Guice Trunk</description>
+  <description>Extensions for Guice.</description>
 
   <licenses>
     <license>
@@ -21,16 +21,13 @@
   </licenses>
 
   <modules>
-      <module>guice</module>
-      <module>multibindings</module>
       <module>plugins</module>
-      <module>gae-plugin</module>
   </modules>
 
   <scm>
-    <connection>scm:svn:http://jolira-tools.googlecode.com/svn/guice/trunk</connection>
-    <developerConnection>scm:svn:https://jolira-tools.googlecode.com/svn/guice/trunk</developerConnection>
-    <url>http://jolira-tools.googlecode.com/svn/guice/trunk</url>
+    <connection>scm:git:git@github.com:jolira/guice.git</connection>
+    <developerConnection>scm:git:git@github.com:jolira/guice.git</developerConnection>
+    <url>https://github.com/jolira/guice</url>
   </scm>
   
   <url>http://code.google.com/p/jolira-tools/wiki/guice</url>
