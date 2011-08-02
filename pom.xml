@@ -6,7 +6,7 @@
     <version>1.1.4</version>
   </parent>
   <artifactId>guice-parent</artifactId>
-  <version>3.1-SNAPSHOT</version>
+  <version>3.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Jolira Guice Parent</name>
@@ -29,7 +29,7 @@
     <developerConnection>scm:git:git@github.com:jolira/guice.git</developerConnection>
     <url>https://github.com/jolira/guice</url>
   </scm>
-  
+
   <url>http://code.google.com/p/jolira-tools/wiki/guice</url>
 </project>
 
