@@ -5,10 +5,10 @@
     <artifactId>guice-parent</artifactId>
     <version>3.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>plugins</artifactId>
+  <artifactId>managed</artifactId>
   <packaging>jar</packaging>
-  <name>Jolira Plugins</name>
-  <description>A Simple but Effective Plugin Mechanism built on Guice Multibindings</description>
+  <name>Managed Singletons for Guice</name>
+  <description>A @ManageSingleton that works much like @Singleton, but can be reset to force recreation of instances.</description>
   <dependencies>
     <dependency>
     	<groupId>org.slf4j</groupId>
@@ -18,18 +18,18 @@
     	<scope>compile</scope>
     </dependency>
     <dependency>
-    	<groupId>com.google.inject.extensions</groupId>
-    	<artifactId>guice-multibindings</artifactId>
-    	<version>${guice.version}</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
     	<groupId>junit</groupId>
     	<artifactId>junit</artifactId>
     	<version>${junit.version}</version>
     	<type>jar</type>
     	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.google.inject</groupId>
+    	<artifactId>guice</artifactId>
+        <version>${guice.version}</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
     </dependency>
   </dependencies>
 </project>

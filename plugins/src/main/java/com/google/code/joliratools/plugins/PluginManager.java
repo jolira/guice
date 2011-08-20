@@ -29,11 +29,9 @@ import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.Scope;
 import com.google.inject.Stage;
 
 /**
@@ -274,15 +272,7 @@ public class PluginManager {
     private Injector loadInjector() {
         final URL[] urls = getServiceURLs(loadMocks);
         final Collection<Module> _modules = new ArrayList<Module>();
-        final Scope scope = new PluginManagerScope();
         final Collection<Class<? extends Module>> loaded = new HashSet<Class<? extends Module>>();
-
-        _modules.add(new Module() {
-            @Override
-            public void configure(final Binder binder) {
-                binder.bindScope(ManagedSingleton.class, scope);
-            }
-        });
 
         for (final Module module : modules) {
             final Class<? extends Module> cls = module.getClass();

@@ -1,5 +1,5 @@
 Google Guice
-================
+====================
 
 Extensions for Guice.
 
@@ -15,3 +15,9 @@ Every JAR used with this mechanism should contains such a META-INF/services/com.
 file. To create the injector, create the PluginManager, which discovers all
 META-INF/services/com.google.inject.Module files in the search path, instantiates
 all the modules identified there and creates an Injector using the modules.
+
+Managed
+--------------------
+
+Singletons are great, but sometimes it is great to get rid of them. ManagedSingletons are
+exactly for that. They exist until they are reset by the SingletonManager.

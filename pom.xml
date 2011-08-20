@@ -20,8 +20,13 @@
     </license>
   </licenses>
 
+  <properties>
+  	<guice.version>3.0</guice.version>
+  	<junit.version>4.8.2</junit.version>
+  </properties>
   <modules>
       <module>plugins</module>
+      <module>managed</module>
   </modules>
 
   <scm>

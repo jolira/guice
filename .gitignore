@@ -1,20 +1,4 @@
-# global git ignore file
-src/**/src/main/java/META-INF
 target
 .settings
 .project
 .classpath
-target
-CVS
-cachedir
-test-output
-*.iml
-*~
-.snapshot.config
-MVNs/
-Makefile.rules
-apache-maven-2.2.0/
-macros.m4
-makefile.incl
-maven
-apache-maven*
