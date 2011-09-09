@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.jolira</groupId>
     <artifactId>guice-parent</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.3-SNAPSHOT</version>
   </parent>
   <artifactId>managed</artifactId>
   <packaging>jar</packaging>
