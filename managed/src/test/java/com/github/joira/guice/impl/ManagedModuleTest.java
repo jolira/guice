@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.junit.Test;
 
-import com.github.joira.guice.SingletonManager;
 import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.MembersInjector;

@@ -8,9 +8,11 @@
 
 package com.github.joira.guice.impl;
 
-import com.github.joira.guice.SingletonManager;
+import com.github.joira.guice.ManagedService;
+import com.github.joira.guice.ServiceManager;
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.multibindings.Multibinder;
 
 /**
  * @author jfk
@@ -22,10 +24,13 @@ public class ManagedModule implements Module {
     @SuppressWarnings("deprecation")
     @Override
     public void configure(final Binder binder) {
+        Multibinder.newSetBinder(binder, ManagedService.class);
+
         final ManagedScope scope = new ManagedScope();
 
         binder.bindScope(com.github.joira.guice.ManagedSingleton.class, scope);
         binder.bindScope(com.google.code.joliratools.plugins.ManagedSingleton.class, scope);
+        binder.bind(ServiceManager.class).to(ServiceManagerImpl.class).asEagerSingleton();
         binder.bind(SingletonManager.class).toInstance(scope);
     }
 

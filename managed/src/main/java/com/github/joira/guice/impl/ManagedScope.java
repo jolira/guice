@@ -8,7 +8,6 @@ package com.github.joira.guice.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.joira.guice.SingletonManager;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Scope;
