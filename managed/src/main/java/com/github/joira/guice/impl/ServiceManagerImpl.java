@@ -5,11 +5,13 @@
 
 package com.github.joira.guice.impl;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import com.github.joira.guice.ManagedService;
@@ -23,7 +25,7 @@ import com.github.joira.guice.ServiceManager;
  */
 @Singleton
 class ServiceManagerImpl implements ServiceManager {
-    private static ManagedService[] sort(final Set<ManagedService> services) {
+    private static ManagedService[] sort(final Collection<ManagedService> services) {
         final TreeSet<ManagedService> _services = new TreeSet<ManagedService>(new Comparator<ManagedService>() {
             @Override
             public int compare(final ManagedService o1, final ManagedService o2) {
@@ -37,6 +39,7 @@ class ServiceManagerImpl implements ServiceManager {
                 return r1 == r2 ? 0 : 1;
             }
         });
+
         _services.addAll(services);
 
         final int size = _services.size();
@@ -46,11 +49,11 @@ class ServiceManagerImpl implements ServiceManager {
 
     private final SingletonManager singletons;
 
-    private final ManagedService[] services;
+    private final Provider<Set<ManagedService>> servicesProvider;
 
     @Inject
-    ServiceManagerImpl(final Set<ManagedService> services, final SingletonManager singletons) {
-        this.services = sort(services);
+    ServiceManagerImpl(final Provider<Set<ManagedService>> servicesProvider, final SingletonManager singletons) {
+        this.servicesProvider = servicesProvider;
         this.singletons = singletons;
 
         start();
@@ -64,16 +67,26 @@ class ServiceManagerImpl implements ServiceManager {
     }
 
     private void start() {
-        synchronized (services) {
+        synchronized (servicesProvider) {
+            final ManagedService[] services = getServices();
+
             for (final ManagedService service : services) {
                 service.start();
             }
         }
     }
 
+    private ManagedService[] getServices() {
+        final Collection<ManagedService> svcs = servicesProvider.get();
+
+        return sort(svcs);
+    }
+
     @Override
     public void stop() {
-        synchronized (services) {
+        synchronized (servicesProvider) {
+            final ManagedService[] services = getServices();
+
             for (int idx = services.length - 1; idx >= 0; idx--) {
                 final ManagedService service = services[idx];
 
@@ -81,5 +94,4 @@ class ServiceManagerImpl implements ServiceManager {
             }
         }
     }
-
 }

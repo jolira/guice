@@ -10,6 +10,8 @@ import static org.junit.Assert.fail;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Provider;
+
 import org.junit.Test;
 
 import com.github.joira.guice.ManagedService;
@@ -129,12 +131,19 @@ public class ServiceManagerImplTest {
             }
         });
 
-        final ServiceManagerImpl manager = new ServiceManagerImpl(services, new SingletonManager() {
+        final Provider<Set<ManagedService>> provider = new Provider<Set<ManagedService>>(){
+            @Override
+            public Set<ManagedService> get() {
+                return services;
+            }
+        };
+        final SingletonManager singletons = new SingletonManager() {
             @Override
             public void reset() {
                 resetCallCount[0]++;
             }
-        });
+        };
+        final ServiceManagerImpl manager = new ServiceManagerImpl(provider, singletons);
 
         manager.restart();
         manager.stop();

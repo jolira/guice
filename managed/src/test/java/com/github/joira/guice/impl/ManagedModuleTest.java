@@ -1,6 +1,5 @@
 package com.github.joira.guice.impl;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -62,12 +61,25 @@ public class ManagedModuleTest {
 
             @Override
             public <T> AnnotatedBindingBuilder<T> bind(final Class<T> type) {
-                assertEquals(SingletonManager.class, type);
                 return new AnnotatedBindingBuilder<T>(){
                     @Override
                     public ScopedBindingBuilder to(final Class<? extends T> implementation) {
-                        fail();
-                        return null;
+                        return new ScopedBindingBuilder(){
+
+                            @Override
+                            public void in(final Class<? extends Annotation> scopeAnnotation) {
+                                fail();
+                            }
+
+                            @Override
+                            public void in(final Scope scope) {
+                                fail();
+                            }
+
+                            @Override
+                            public void asEagerSingleton() {
+                                // nothing
+                            }};
                     }
 
                     @Override
@@ -249,8 +261,145 @@ public class ManagedModuleTest {
             @SuppressWarnings("rawtypes")
             @Override
             public Binder skipSources(final Class... classesToSkip) {
-                fail();
-                return null;
+                return new Binder(){
+
+                    @Override
+                    public void bindInterceptor(final Matcher<? super Class<?>> classMatcher,
+                            final Matcher<? super Method> methodMatcher, final MethodInterceptor... interceptors) {
+                        fail();
+                    }
+
+                    @Override
+                    public void bindScope(final Class<? extends Annotation> annotationType, final Scope scope) {
+                        fail();
+                    }
+
+                    @Override
+                    public <T> LinkedBindingBuilder<T> bind(final Key<T> key) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public <T> AnnotatedBindingBuilder<T> bind(final TypeLiteral<T> typeLiteral) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public <T> AnnotatedBindingBuilder<T> bind(final Class<T> type) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public AnnotatedConstantBindingBuilder bindConstant() {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public <T> void requestInjection(final TypeLiteral<T> type, final T instance) {
+                        fail();
+                    }
+
+                    @Override
+                    public void requestInjection(final Object instance) {
+                        fail();
+                    }
+
+                    @Override
+                    public void requestStaticInjection(final Class<?>... types) {
+                        fail();
+                    }
+
+                    @Override
+                    public void install(final Module module1) {
+                        // nothing;
+                    }
+
+                    @Override
+                    public Stage currentStage() {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public void addError(final String message, final Object... arguments) {
+                        fail();
+                    }
+
+                    @Override
+                    public void addError(final Throwable t) {
+                        fail();
+                    }
+
+                    @Override
+                    public void addError(final Message message) {
+                        fail();
+                    }
+
+                    @Override
+                    public <T> Provider<T> getProvider(final Key<T> key) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public <T> Provider<T> getProvider(final Class<T> type) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public <T> MembersInjector<T> getMembersInjector(final TypeLiteral<T> typeLiteral) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public <T> MembersInjector<T> getMembersInjector(final Class<T> type) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public void convertToTypes(final Matcher<? super TypeLiteral<?>> typeMatcher, final TypeConverter converter) {
+                        fail();
+                    }
+
+                    @Override
+                    public void bindListener(final Matcher<? super TypeLiteral<?>> typeMatcher, final TypeListener listener) {
+                        fail();
+                    }
+
+                    @Override
+                    public Binder withSource(final Object source) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public Binder skipSources(final Class... classesToSkip1) {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public PrivateBinder newPrivateBinder() {
+                        fail();
+                        return null;
+                    }
+
+                    @Override
+                    public void requireExplicitBindings() {
+                        fail();
+                    }
+
+                    @Override
+                    public void disableCircularProxies() {
+                        fail();
+                    }};
             }
 
             @Override
